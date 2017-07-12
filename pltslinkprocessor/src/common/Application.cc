@@ -243,7 +243,8 @@ bool bril::pltslinkprocessor::Application::publishing(toolbox::task::WorkLoop* w
         if(data) 
             data->release();
     }
-    return true;
+    //return true;
+    return false;
 }
 
 
@@ -340,7 +341,7 @@ void bril::pltslinkprocessor::Application::zmqClient()
     // Loop and receive messages
     while (1) {
         //usleep(100000000);
-        usleep(100000);
+        //usleep(100000);
 
         zmq_poll(&pollItems[0],  2,  -1);
 
