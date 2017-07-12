@@ -113,6 +113,10 @@ namespace bril
                 xdata::String m_bus;
                 xdata::String m_workloopHost;
                 xdata::String m_slinkHost;
+                xdata::String m_gcFile;
+                xdata::String m_alFile;
+                xdata::String m_pixMask;
+                xdata::String m_baseDir;
                 typedef std::multimap< std::string, std::string > TopicStore;
                 typedef std::multimap< std::string, std::string >::iterator TopicStoreIt;
                 TopicStore m_out_topicTobuses;

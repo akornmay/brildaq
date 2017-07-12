@@ -103,7 +103,11 @@ bril::pltslinkprocessor::Application::Application (xdaq::ApplicationStub* s) thr
     try{
         getApplicationInfoSpace()->fireItemAvailable("bus",&m_bus);
         getApplicationInfoSpace()->fireItemAvailable("workloopHost",&m_workloopHost);
-        getApplicationInfoSpace()->fireItemAvailable("slinkHost",&m_slinkHost);
+        getApplicationInfoSpace()->fireItemAvailable("slinkHost",&m_slinkHost);  
+        getApplicationInfoSpace()->fireItemAvailable("gcFile",&m_gcFile);  
+        getApplicationInfoSpace()->fireItemAvailable("alFile",&m_alFile);  
+        getApplicationInfoSpace()->fireItemAvailable("pixMask",&m_pixMask);  
+        getApplicationInfoSpace()->fireItemAvailable("baseDir",&m_baseDir);  
         getApplicationInfoSpace()->addListener(this, "urn:xdaq-event:setDefaultValues");
         m_publishing = toolbox::task::getWorkLoopFactory()->getWorkLoop(m_appDescriptor->getURN()+"_publishing","waiting");
     }
@@ -324,11 +328,13 @@ void bril::pltslinkprocessor::Application::zmqClient()
     // want to implement these in order to do more interesting things.
 
     // Maybe put these in the configuration xml
-    string gcFile = "/nfshome0/naodell/plt/daq/bril/pltslinkprocessor/data/GainCalFits_20160501.155303.dat";
-    string alFile = "/nfshome0/naodell/plt/daq/bril/pltslinkprocessor/data/Trans_Alignment_4895.dat";
+    //string gcFile = "/nfshome0/naodell/plt/daq/bril/pltslinkprocessor/data/GainCalFits_20160501.155303.dat";
+    //string alFile = "/nfshome0/naodell/plt/daq/bril/pltslinkprocessor/data/Trans_Alignment_4895.dat";
 
-    PLTEvent *event = new PLTEvent("", gcFile, alFile, kBuffer);
-    event->ReadOnlinePixelMask("/nfshome0/naodell/plt/daq/bril/pltslinkprocessor/data/Mask_2016_VdM_v1.txt");
+    //PLTEvent *event = new PLTEvent("", gcFile, alFile, kBuffer);
+    PLTEvent *event = new PLTEvent("", m_gcFile.value_, m_alFile.value_, kBuffer);
+    //event->ReadOnlinePixelMask("/nfshome0/naodell/plt/daq/bril/pltslinkprocessor/data/Mask_2016_VdM_v1.txt");
+    event->ReadOnlinePixelMask(m_pixMask.value_);
     event->SetPlaneClustering(PLTPlane::kClustering_NoClustering, PLTPlane::kFiducialRegion_All);
     event->SetPlaneFiducialRegion(PLTPlane::kFiducialRegion_All);
     event->SetTrackingAlgorithm(PLTTracking::kTrackingAlgorithm_01to2_AllCombs);
@@ -506,7 +512,8 @@ void bril::pltslinkprocessor::Application::makePlots()
     //string baseDir = "/cmsnfsscratch/globalscratch/cmsbril/PLT/DQM/run%06d";
 
     // prepare the output directory
-    string baseDir = "/nfshome0/naodell/test_data";
+    //string baseDir = "/nfshome0/naodell/test_data";
+    string baseDir = m_baseDir.value_;
     std::stringstream ss;
     ss << baseDir << "/run_" << m_run;
     string outDir = ss.str();
@@ -627,7 +634,8 @@ void bril::pltslinkprocessor::Application::makePlots()
 void bril::pltslinkprocessor::Application::initializeOutputFiles(unsigned runNumber, vector<unsigned> channels)
 {
     std::stringstream fname;
-    string baseDir = "/nfshome0/naodell/test_data";
+    //string baseDir = "/nfshome0/naodell/test_data";
+    string baseDir = m_baseDir.value_;
 
     fname << baseDir << "/efficiencies_" << m_run << ".csv";
     string fname_str = fname.str();
