@@ -2,8 +2,11 @@
 #define _bril_pltslinkprocessor_receiver_h
 
 #include <string>
+#include <fstream>
+#include <iostream>
 #include <vector>
 #include <map>
+
 #include "xdaq/Application.h"
 #include "xgi/framework/UIManager.h"
 #include "xgi/framework/Method.h"
@@ -18,6 +21,8 @@
 #include "b2in/nub/exception/Exception.h"
 #include "b2in/nub/Method.h"
 #include "toolbox/BSem.h"
+
+#include "bril/pltslinkprocessor/EventAnalyzer.h"
 
 namespace bril {
     namespace pltslinkprocessor {
@@ -34,6 +39,7 @@ namespace bril {
             void actionPerformed(xdata::Event&);
             void actionPerformed(toolbox::Event&);     
             void onMessage(toolbox::mem::Reference*, xdata::Properties&) throw (b2in::nub::exception::Exception);
+            void initializeOutputFiles(unsigned runNumber);
 
         private:
             xdata::String bus_name_;
@@ -43,6 +49,11 @@ namespace bril {
         private: 
             receiver(const receiver&);
             receiver& operator=(const receiver&);
+
+        protected:
+            unsigned int m_oldrun;
+            unsigned int m_oldls;
+            ofstream publishFile; 
 
         };
     } // end namepace pltslinkprocessor

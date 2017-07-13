@@ -372,6 +372,7 @@ void bril::pltslinkprocessor::Application::zmqClient()
                 effFile.close();
                 accFile.close();
                 lumiFile.close();
+                publishFile.close();
                 this->initializeOutputFiles(m_run, channels);
             }
 
@@ -387,6 +388,8 @@ void bril::pltslinkprocessor::Application::zmqClient()
                 effFile << m_ls;
                 accFile << m_ls;
                 lumiFile << m_ls;
+
+                publishFile << m_fill << "," << m_run << "," << m_ls;
 
                 const unsigned nChannels = sizeof(validChannels) / sizeof(validChannels[0]);
                 vector<float> eff;
@@ -419,6 +422,9 @@ void bril::pltslinkprocessor::Application::zmqClient()
 
                 float pZero    = 1337*(1. - avgRateNum/avgRateDen);
                 float pZeroRaw = 1337*(1. - avgRateRaw);
+
+                publishFile << "," << pZero << "," << pZeroRaw;
+                publishFile << "\n" << std::flush;
 
                 toolbox::TimeVal timeStamp = toolbox::TimeVal::gettimeofday();
 
@@ -646,15 +652,21 @@ void bril::pltslinkprocessor::Application::initializeOutputFiles(unsigned runNum
     fname_str = fname.str();
     accFile.open(fname_str.c_str(), ios::out);
     fname.str("");
-
+ 
     fname << baseDir << "/lumi_rates_" << m_run << ".csv";
     fname_str = fname.str();
     lumiFile.open(fname_str.c_str(), ios::out);
+    fname.str("");
+    
+    fname << baseDir << "/publish_log_" << m_run << ".csv";
+    fname_str = fname.str();
+    publishFile.open(fname_str.c_str(), ios::out);
     fname.str("");
 
     effFile  << "lumi_section";
     accFile  << "lumi_section";
     lumiFile << "lumi_section";
+    publishFile << "fill,run,lumi,avg,avgraw";
 
     for (unsigned i = 0; i < channels.size(); ++i) {
         unsigned ch = channels[i];
@@ -665,4 +677,5 @@ void bril::pltslinkprocessor::Application::initializeOutputFiles(unsigned runNum
     effFile  << "\n";
     accFile  << "\n";
     lumiFile << "\n";
+    publishFile << "\n";
 }

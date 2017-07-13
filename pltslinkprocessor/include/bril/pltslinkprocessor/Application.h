@@ -133,6 +133,7 @@ namespace bril
                 ofstream effFile;
                 ofstream accFile;
                 ofstream lumiFile;
+                ofstream publishFile;
 
                 std::map<std::string,std::string> m_outtopicdicts;
                 toolbox::task::WorkLoop* m_publishing;
